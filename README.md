@@ -101,9 +101,41 @@ CH584_Template/
 
 **位置**：`.vscode/launch.json`（调试配置名 `Debug with OpenOCD`）。
 
-需要按新环境修改的字段：
+> **该文件默认不随仓库同步**：`.gitignore` 中包含 `/.vscode/launch.json`，因为其中的调试器路径与个人环境绑定。克隆工程后 `.vscode/launch.json` 并不存在，需要在本地新建；若团队环境统一，也可以删除该忽略行（或 `git add -f .vscode/launch.json`）让它纳入版本管理。
 
-| 字段 | 当前值 | 说明 |
+**模板**（新建 `.vscode/launch.json` 后直接粘贴，再按下表改路径）：
+
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug with OpenOCD",
+            "type": "cortex-debug",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "executable": "./build/Debug/${workspaceFolderBasename}.elf",
+            "servertype": "openocd",
+            "serverpath": "${workspaceFolder}/../../wch_flash/wch_openocd/bin/openocd.exe",
+            "toolchainPrefix": "${workspaceFolder}/../../Toolchain/RISC-V Embedded GCC15/bin/riscv32-wch-elf",
+            "configFiles": [
+                "${workspaceFolder}/../../wch_flash/wch_openocd/bin/wch-riscv.cfg"
+            ],
+            "svdFile": "./Drivers/Device/CH585.svd",
+            "runToEntryPoint": "main",
+            "showDevDebugOutput": "none",
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4
+            }
+        }
+    ]
+}
+```
+
+**需要按环境修改的字段：**
+
+| 字段 | 模板中的值 | 说明 |
 | --- | --- | --- |
 | `serverpath` | `${workspaceFolder}/../../wch_flash/wch_openocd/bin/openocd.exe` | WCH OpenOCD 可执行文件 |
 | `toolchainPrefix` | `${workspaceFolder}/../../Toolchain/RISC-V Embedded GCC15/bin/riscv32-wch-elf` | GDB 等工具前缀（GCC15） |
@@ -111,13 +143,7 @@ CH584_Template/
 | `executable` | `./build/Debug/${workspaceFolderBasename}.elf` | 若构建输出目录/文件名变化需同步 |
 | `svdFile` | `./Drivers/Device/CH585.svd` | 外设寄存器视图；CH584 为 CH585 裁剪型号，**共用同一 SVD**，无需替换 |
 
-可改为相对工程路径，也可直接改成绝对路径，例如：
-
-```jsonc
-"serverpath": "C:/WCH/wch_openocd/bin/openocd.exe",
-"toolchainPrefix": "C:/WCH/Toolchain/RISC-V Embedded GCC15/bin/riscv32-wch-elf",
-"configFiles": ["C:/WCH/wch_openocd/bin/wch-riscv.cfg"],
-```
+前三项也可直接写成绝对路径，例如 `"serverpath": "C:/WCH/wch_openocd/bin/openocd.exe"`。
 
 ### 3.3 烧录命令 —— 自定义上传器命令行
 
