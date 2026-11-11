@@ -1,0 +1,109 @@
+version: "4.1"
+name: CH584_Template
+type: RISC-V
+deviceName: null
+packDir: null
+srcDirs:
+  - Protocol
+  - Drivers/CH58x_HAL_Driver
+  - Drivers/Device
+  - BSP
+  - Core
+virtualFolder:
+  name: <virtual_root>
+  files: []
+  folders: []
+dependenceList: []
+outDir: build
+miscInfo:
+  uid: 2270afca3908c5711d542c9fddf5c46a
+targets:
+  Debug:
+    cppPreprocessAttrs:
+      defineList:
+        - DEBUG
+      incList:
+        - Protocol/ble
+        - Protocol/rf
+        - Protocol/stack
+        - Drivers/CH58x_HAL_Driver/LIB
+        - Drivers/CH58x_HAL_Driver/LIB/BLE
+        - Drivers/CH58x_HAL_Driver/inc
+        - Drivers/Device
+        - BSP/debug
+        - BSP/i2c
+        - BSP/lcd
+        - BSP/pwm
+        - BSP/spi
+        - BSP/tim
+        - BSP/uart
+        - Core
+        - BSP/adc
+      libList:
+        - StdPeriphDriver
+        - Drivers/CH58x_HAL_Driver/LIB
+        - Drivers/CH58x_HAL_Driver/LIB/BLE
+        - Drivers/Device
+    excludeList: []
+    settings: {}
+    toolchain: RISCV_GCC
+    toolchainConfigMap:
+      RISCV_GCC:
+        linkerScriptPath: Drivers/Device/CH584_FLASH.ld
+        options:
+          version: 2
+          afterBuildTasks: []
+          asm-compiler:
+            ASM_FLAGS: -Wl,-Bstatic
+          beforeBuildTasks: []
+          c/cpp-compiler:
+            C_FLAGS: -Wl,-Bstatic
+            language-c: gnu23
+            language-cpp: gnu++23
+            one-elf-section-per-data: true
+            one-elf-section-per-function: true
+            optimization: level-3
+            signed-char: true
+            warnings: all-warnings
+          global:
+            abi: ilp32
+            arch: rv32imac
+            code-model: medlow
+            misc-control: -fmessage-length=0 -fno-common
+            output-debug-info: enable
+          linker:
+            $disableOutputTask: true
+            $outputTaskExcludes:
+              - .bin
+            $toolName: auto
+            LD_FLAGS: -nostartfiles -Xlinker --print-memory-usage --specs=nano.specs --specs=nosys.specs
+            LIB_FLAGS: -lISP585 -lCH58xBLE
+            output-format: elf
+            remove-unused-input-sections: true
+    uploadConfigMap:
+      Custom:
+        bin: ${ExecutableName}.elf
+        commandLine: bash ../../wch_flash/wch_openocd.sh "${programFile}"
+        eraseChipCommand: ""
+      JLink:
+        baseAddr: ""
+        bin: ""
+        cpuInfo:
+          cpuName: "null"
+          vendor: "null"
+        otherCmds: ""
+        proType: 1
+        speed: 8000
+      OpenOCD:
+        baseAddr: "0x08000000"
+        bin: ${ExecutableName}.elf
+        interface: wch2pin
+        target: ""
+      pyOCD:
+        baseAddr: "0x08000000"
+        bin: ""
+        config: .eide/debug.pyocd.yaml
+        otherCmds: ""
+        speed: 4M
+        targetName: cortex_m
+    uploader: Custom
